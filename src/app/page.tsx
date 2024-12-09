@@ -12,13 +12,15 @@ import { useEffect } from "react";
 
 export default function Home() {
   const router = useRouter();
-  const { isSignedIn } = useUser();
+  const { isLoaded, isSignedIn } = useUser();
 
   useEffect(() => {
     if (isSignedIn) {
       router.push("/dashboard");
     }
-  });
+  }, [isLoaded, isSignedIn, router]);
+
+  if (!isLoaded) return null;
 
   return (
     <div className="grid items-center justify-items-center min-h-screen font-[family-name:var(--font-geist-sans)]">
