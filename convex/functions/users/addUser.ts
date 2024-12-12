@@ -5,7 +5,7 @@ export default mutation({
   args: {
     firstName: v.string(),
     lastName: v.string(),
-    email: v.id("users"),
+    email: v.string(),
     password: v.string(),
     type: v.string(),
     code: v.id("classroomCodes"),
