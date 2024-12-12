@@ -10,11 +10,11 @@ export default defineSchema({
   users: defineTable({
     firstName: v.string(),
     lastName: v.string(),
-    email: v.id("users"),
+    email: v.string(),
     password: v.string(),
     type: v.string(),
     code: v.id("classroomCodes"),
-  }).index("by_email", ["email"]),
+  }).index("by_firstName", ["firstName"]),
 
   tasks: defineTable({
     title: v.string(),
