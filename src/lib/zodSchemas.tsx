@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { UserType } from "./enums";
+import { UserType } from "./types";
 
 export const registerSchema = z
   .object({
