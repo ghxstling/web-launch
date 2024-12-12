@@ -4,6 +4,7 @@ import { v } from "convex/values";
 export default defineSchema({
   classroomCodes: defineTable({
     code: v.string(),
+    createdBy: v.id("users"),
   }),
 
   users: defineTable({
