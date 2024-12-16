@@ -4,6 +4,7 @@ const isPublicRoute = createRouteMatcher([
   "/register(.*)",
   "/login(.*)",
   "/forgot-password(.*)",
+  "/debug(.*)",
   "/",
 ]);
 
