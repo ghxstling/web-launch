@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,32 +12,37 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { UserType } from "@/lib/enums";
+import { IRegisterForm } from "@/lib/types";
 import { registerSchema } from "@/lib/zodSchemas";
 import { useState } from "react";
 import { useSignUp } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-interface IFormInput {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirm: string;
-  type: UserType | undefined;
-  code: string;
-}
+import { useConvex } from "convex/react";
+import { useUserService } from "../../convex/services/userService";
+import { useClassroomCodesService } from "../../convex/services/classroomCodesService";
+import { useRouter } from "next/navigation";
 
 export function RegisterForm() {
-  const { isLoaded, signUp } = useSignUp();
+  const { isLoaded, signUp, setActive } = useSignUp();
+  const router = useRouter();
+  const convex = useConvex();
+  const userService = useUserService(convex);
+  const classroomCodesService = useClassroomCodesService(convex);
+
   const [loadingMessage, setLoadingMessage] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [message, setMessage] = useState<String | undefined>(undefined);
+  const [verifyingMessage, setVerifyingMessage] = useState<String | undefined>(
+    undefined,
+  );
+  const [code, setCode] = useState("");
+  const [user, setUser] = useState<IRegisterForm | null>(null);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<IFormInput>({
+  } = useForm<IRegisterForm>({
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -52,9 +55,25 @@ export function RegisterForm() {
     resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+  const resetEffects = () => {
+    setMessage(undefined);
+    setLoadingMessage(false);
+    setVerifyingMessage(undefined);
+  };
+
+  const onSubmit: SubmitHandler<IRegisterForm> = async (data) => {
+    resetEffects();
     setLoadingMessage(true);
     try {
+      const validCode = await classroomCodesService.getClassroomCode(
+        data.code!,
+      );
+      if (!validCode) {
+        resetEffects();
+        setMessage("Invalid classroom code");
+        return;
+      }
+
       await signUp!.create({
         firstName: data.firstName,
         lastName: data.lastName,
@@ -62,18 +81,40 @@ export function RegisterForm() {
         password: data.password,
         unsafeMetadata: {
           userType: data.type,
-          code: data.code,
+          code: validCode.code,
         },
       });
 
       await signUp!.prepareEmailAddressVerification({
-        strategy: "email_link",
-        redirectUrl: `${window.location.origin}/dashboard`,
+        strategy: "email_code",
       });
 
+      setUser(data);
       setVerifying(true);
-    } catch (err) {
-      alert(err);
+    } catch (err: any) {
+      resetEffects();
+      setMessage(err.message);
+    }
+  };
+
+  const validateCode = async (e: React.FormEvent) => {
+    resetEffects();
+    e.preventDefault();
+
+    if (!isLoaded) return;
+
+    try {
+      const completeSignUp = await signUp!.attemptEmailAddressVerification({
+        code,
+      });
+      if (completeSignUp.status === "complete") {
+        await setActive({ session: completeSignUp.createdSessionId });
+        console.log(await userService.createUser(user!));
+        router.push("/dashboard");
+      }
+    } catch (err: any) {
+      resetEffects();
+      setVerifyingMessage(err.message);
     }
   };
 
@@ -87,15 +128,28 @@ export function RegisterForm() {
             <CardTitle className="text-2xl mx-auto">Success!</CardTitle>
           </CardHeader>
           <CardContent className="mx-auto">
-            <div className="grid gap-3">
-              <p className="text-center">
-                An email has been sent to your email with a link to verify your
-                account. Please check your inbox and click the link to continue.
-              </p>
-              <Button type="submit" className="w-full">
-                <Link href="/login">Return to Log In</Link>
-              </Button>
-            </div>
+            <form onSubmit={validateCode}>
+              <div className="grid gap-3">
+                <p className="text-center">
+                  A code has been sent to your email. Please enter it below to
+                  verify your account.
+                </p>
+                <Input
+                  id="validateCode"
+                  value={code}
+                  type="text"
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="ABC123"
+                  maxLength={6}
+                />
+                {verifyingMessage && (
+                  <p className="text-red-500 text-sm">{verifyingMessage}</p>
+                )}
+                <Button type="submit" className="w-full">
+                  Verify
+                </Button>
+              </div>
+            </form>
           </CardContent>
         </Card>
       </>
@@ -120,7 +174,7 @@ export function RegisterForm() {
                   <div className="grid max-w-[calc(50%-0.5rem)] gap-2">
                     <Controller
                       render={({ field }) => (
-                        <Input id="text" placeholder="John" {...field} />
+                        <Input id="firstName" placeholder="John" {...field} />
                       )}
                       name="firstName"
                       control={control}
@@ -134,7 +188,7 @@ export function RegisterForm() {
                   <div className="grid max-w-[calc(50%)] gap-2">
                     <Controller
                       render={({ field }) => (
-                        <Input id="text" placeholder="Smith" {...field} />
+                        <Input id="lastName" placeholder="Smith" {...field} />
                       )}
                       name="lastName"
                       control={control}
@@ -237,6 +291,7 @@ export function RegisterForm() {
               {errors.code?.message && (
                 <p className="text-red-500 text-sm">{errors.code?.message}</p>
               )}
+              {message && <p className="text-red-500 text-sm">{message}</p>}
               <Button type="submit" className="w-full">
                 {loadingMessage ? "Loading..." : "Sign up"}
               </Button>
@@ -244,7 +299,6 @@ export function RegisterForm() {
           </form>
         </CardContent>
       </Card>
-      <div id="clerk-captcha" />
     </>
   );
 }
