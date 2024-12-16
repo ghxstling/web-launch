@@ -18,16 +18,7 @@ export default function DebugPage() {
 
   const [apiResponse, setApiResponse] = useState(null);
   const [error, setError] = useState<string | null>(null);
-  const [apiUser, setApiUser] = useState<{
-    _id: Id<"users">;
-    _creationTime: number;
-    type: string;
-    code?: Id<"classroomCodes">;
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-  } | null>(null);
+  const [apiUser, setApiUser] = useState<any>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
