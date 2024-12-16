@@ -15,7 +15,7 @@ export interface IRegisterForm extends ILoginForm {
   lastName: string;
   confirm: string;
   type: UserType;
-  code: Id<"classroomCodes">;
+  code?: Id<"classroomCodes">;
 }
 
 export interface ITaskForm {
