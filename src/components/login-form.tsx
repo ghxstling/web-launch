@@ -16,14 +16,13 @@ import { loginSchema } from "@/lib/zodSchemas";
 import { useState } from "react";
 import { useSignIn } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-interface IFormInput {
-  email: string;
-  password: string;
-}
+import { ILoginForm } from "@/lib/types";
+import { useRouter } from "next/navigation";
 
 export function LoginForm() {
   const { isLoaded, signIn, setActive } = useSignIn();
+  const router = useRouter();
+
   const [message, setMessage] = useState<String | undefined>(undefined);
   const [loadingMessage, setLoadingMessage] = useState(false);
 
@@ -46,7 +45,7 @@ export function LoginForm() {
     setLoadingMessage(false);
   };
 
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+  const onSubmit: SubmitHandler<ILoginForm> = async (data) => {
     resetEffects();
     setLoadingMessage(true);
     try {
@@ -56,10 +55,9 @@ export function LoginForm() {
         password: data.password,
       });
 
-      if (user) {
-        setActive({
-          session: user.createdSessionId,
-        });
+      if (user.status === "complete") {
+        await setActive({ session: user.createdSessionId });
+        router.push("/dashboard");
       }
     } catch (err: any) {
       resetEffects();
