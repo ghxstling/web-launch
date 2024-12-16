@@ -12,8 +12,9 @@ export default defineSchema({
     lastName: v.string(),
     email: v.string(),
     password: v.string(),
+    confirm: v.optional(v.string()),
     type: v.string(),
-    code: v.id("classroomCodes"),
+    code: v.optional(v.id("classroomCodes")),
   }).index("by_firstName", ["firstName"]),
 
   tasks: defineTable({
