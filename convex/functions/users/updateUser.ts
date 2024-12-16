@@ -10,7 +10,7 @@ export default mutation({
     password: v.string(),
     confirm: v.string(),
     type: v.string(),
-    code: v.optional(v.id("classroomCodes")),
+    code: v.optional(v.union(v.id("classroomCodes"), v.string())),
   },
   handler: async (ctx, args) => {
     return await ctx.db.replace(args._id, args);
