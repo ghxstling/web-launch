@@ -21,6 +21,7 @@ import { useConvex } from "convex/react";
 import { useUserService } from "../../convex/services/userService";
 import { useClassroomCodesService } from "../../convex/services/classroomCodesService";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export function RegisterForm() {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -37,6 +38,11 @@ export function RegisterForm() {
   );
   const [code, setCode] = useState("");
   const [user, setUser] = useState<IRegisterForm | null>(null);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  const togglePassword = () => {
+    setShowPassword((prevState) => !prevState);
+  };
 
   const {
     control,
@@ -123,7 +129,7 @@ export function RegisterForm() {
   if (verifying) {
     return (
       <>
-        <Card className="mx-auto max-w-sm">
+        <Card className="mx-auto w-full max-w-sm">
           <CardHeader>
             <CardTitle className="text-2xl mx-auto">Success!</CardTitle>
           </CardHeader>
@@ -219,10 +225,33 @@ export function RegisterForm() {
                 <p className="text-red-500 text-sm">{errors.email?.message}</p>
               )}
               <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
+                <div className="flex items-center">
+                  <Label htmlFor="password">Password</Label>
+                  {showPassword ? (
+                    <Link
+                      href=""
+                      className="font-normal ml-auto inline-block text-sm underline"
+                      onClick={togglePassword}
+                    >
+                      Hide
+                    </Link>
+                  ) : (
+                    <Link
+                      href=""
+                      className="font-normal ml-auto inline-block text-sm underline"
+                      onClick={togglePassword}
+                    >
+                      Show
+                    </Link>
+                  )}
+                </div>{" "}
                 <Controller
                   render={({ field }) => (
-                    <Input id="password" type="password" {...field} />
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      {...field}
+                    />
                   )}
                   name="password"
                   control={control}
@@ -237,7 +266,11 @@ export function RegisterForm() {
                 <Label htmlFor="password">Retype Password</Label>
                 <Controller
                   render={({ field }) => (
-                    <Input id="confirm" type="password" {...field} />
+                    <Input
+                      id="confirm"
+                      type={showPassword ? "text" : "password"}
+                      {...field}
+                    />
                   )}
                   name="confirm"
                   control={control}

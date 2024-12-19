@@ -25,6 +25,11 @@ export function LoginForm() {
 
   const [message, setMessage] = useState<String | undefined>(undefined);
   const [loadingMessage, setLoadingMessage] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  const togglePassword = () => {
+    setShowPassword((prevState) => !prevState);
+  };
 
   if (!isLoaded) return null;
 
@@ -66,7 +71,7 @@ export function LoginForm() {
   };
 
   return (
-    <Card className="mx-auto max-w-sm">
+    <Card className="mx-auto w-full max-w-sm">
       <CardHeader>
         <CardTitle className="text-2xl">Login to LearnQuest</CardTitle>
         <CardDescription>
@@ -92,20 +97,41 @@ export function LoginForm() {
             <div className="grid gap-2">
               <div className="flex items-center">
                 <Label htmlFor="password">Password</Label>
-                <Link
-                  href="/forgot-password"
-                  className="ml-auto inline-block text-sm underline"
-                >
-                  Forgot your password?
-                </Link>
+                {showPassword ? (
+                  <Link
+                    href=""
+                    className="font-normal ml-auto inline-block text-sm underline"
+                    onClick={togglePassword}
+                  >
+                    Hide
+                  </Link>
+                ) : (
+                  <Link
+                    href=""
+                    className="font-normal ml-auto inline-block text-sm underline"
+                    onClick={togglePassword}
+                  >
+                    Show
+                  </Link>
+                )}
               </div>
               <Controller
                 render={({ field }) => (
-                  <Input id="password" type="password" {...field} />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    {...field}
+                  />
                 )}
                 name="password"
                 control={control}
               />
+              <Link
+                href="/forgot-password"
+                className="ml-auto inline-block text-sm underline"
+              >
+                Forgot your password?
+              </Link>
               {errors.password?.message && (
                 <p className="text-red-500 text-sm">
                   {errors.password?.message}
