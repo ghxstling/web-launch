@@ -22,6 +22,16 @@ export function useUserService(convex: ConvexReactClient) {
     });
   };
 
+  const getAllUsers = async () => {
+    return await convex.query(api.functions.users.getAllUsers.default);
+  };
+
+  const getUsersByClassroomCode = async (code: string) => {
+    return (await convex.query(api.functions.users.getAllUsers.default)).filter(
+      (user) => user.code === code,
+    );
+  };
+
   const createUser = async (data: IRegisterForm) => {
     const checkUser = await getUserByEmail(data.email);
     if (!checkUser) {
@@ -51,6 +61,8 @@ export function useUserService(convex: ConvexReactClient) {
     getUserByEmail,
     getUserById,
     getUsersByType,
+    getAllUsers,
+    getUsersByClassroomCode,
     createUser,
     updateUser,
     deleteUser,
