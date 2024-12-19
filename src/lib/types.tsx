@@ -18,6 +18,13 @@ export interface IRegisterForm extends ILoginForm {
   code?: Id<"classroomCodes"> | string;
 }
 
+export interface IUpdateAccountForm {
+  firstName: string;
+  lastName: string;
+  password: string;
+  confirm: string;
+}
+
 export interface ITaskForm {
   title: string;
   description: string;
