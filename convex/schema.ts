@@ -14,7 +14,7 @@ export default defineSchema({
     password: v.string(),
     confirm: v.optional(v.string()),
     type: v.string(),
-    code: v.optional(v.union(v.id("classroomCodes"), v.string())),
+    code: v.union(v.id("classroomCodes"), v.string()),
   }).index("by_firstName", ["firstName"]),
 
   tasks: defineTable({
@@ -22,7 +22,7 @@ export default defineSchema({
     description: v.optional(v.string()),
     dueDate: v.string(),
     completed: v.boolean(),
-    assignedTo: v.id("users"),
+    code: v.union(v.id("classroomCodes"), v.string()),
     assignedBy: v.id("users"),
   }).index("by_dueDate", ["dueDate"]),
 });

@@ -7,7 +7,7 @@ export default mutation({
     description: v.optional(v.string()),
     dueDate: v.string(),
     completed: v.boolean(),
-    assignedTo: v.id("users"),
+    code: v.string(),
     assignedBy: v.id("users"),
   },
   handler: async (ctx, args) => {

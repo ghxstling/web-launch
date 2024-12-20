@@ -25,7 +25,7 @@ import type * as functions_tasks_deleteTask from "../functions/tasks/deleteTask.
 import type * as functions_tasks_getAllTasks from "../functions/tasks/getAllTasks.js";
 import type * as functions_tasks_getTaskById from "../functions/tasks/getTaskById.js";
 import type * as functions_tasks_getTasksAssignedByUser from "../functions/tasks/getTasksAssignedByUser.js";
-import type * as functions_tasks_getTasksAssignedToUser from "../functions/tasks/getTasksAssignedToUser.js";
+import type * as functions_tasks_getTasksByClassroomCode from "../functions/tasks/getTasksByClassroomCode.js";
 import type * as functions_tasks_updateTask from "../functions/tasks/updateTask.js";
 import type * as functions_users_addUser from "../functions/users/addUser.js";
 import type * as functions_users_deleteUser from "../functions/users/deleteUser.js";
@@ -59,7 +59,7 @@ declare const fullApi: ApiFromModules<{
   "functions/tasks/getAllTasks": typeof functions_tasks_getAllTasks;
   "functions/tasks/getTaskById": typeof functions_tasks_getTaskById;
   "functions/tasks/getTasksAssignedByUser": typeof functions_tasks_getTasksAssignedByUser;
-  "functions/tasks/getTasksAssignedToUser": typeof functions_tasks_getTasksAssignedToUser;
+  "functions/tasks/getTasksByClassroomCode": typeof functions_tasks_getTasksByClassroomCode;
   "functions/tasks/updateTask": typeof functions_tasks_updateTask;
   "functions/users/addUser": typeof functions_users_addUser;
   "functions/users/deleteUser": typeof functions_users_deleteUser;

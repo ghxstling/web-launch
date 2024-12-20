@@ -15,7 +15,7 @@ export interface IRegisterForm extends ILoginForm {
   lastName: string;
   confirm: string;
   type: UserType;
-  code?: Id<"classroomCodes"> | string;
+  code: Id<"classroomCodes"> | string;
 }
 
 export interface IUpdateAccountForm {
@@ -30,6 +30,6 @@ export interface ITaskForm {
   description: string;
   dueDate: string;
   completed: boolean;
-  assignedTo: Id<"users">;
+  code: Id<"classroomCodes"> | string;
   assignedBy: Id<"users">;
 }
