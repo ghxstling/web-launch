@@ -8,9 +8,9 @@ export default mutation({
     lastName: v.string(),
     email: v.string(),
     password: v.string(),
-    confirm: v.string(),
+    confirm: v.optional(v.string()),
     type: v.string(),
-    code: v.optional(v.union(v.id("classroomCodes"), v.string())),
+    code: v.string(),
   },
   handler: async (ctx, args) => {
     return await ctx.db.replace(args._id, args);
