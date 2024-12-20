@@ -3,12 +3,12 @@ import { v } from "convex/values";
 
 export default query({
   args: {
-    code: v.string(),
+    assignedTo: v.id("users"),
   },
   handler: async (ctx, args) => {
     return await ctx.db
       .query("tasks")
-      .filter((q) => q.eq(q.field("code"), args.code))
+      .filter((q) => q.eq(q.field("assignedTo"), args.assignedTo))
       .collect();
   },
 });
