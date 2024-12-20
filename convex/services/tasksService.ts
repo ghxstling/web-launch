@@ -20,16 +20,18 @@ export function useTasksService(convex: ConvexReactClient) {
     return await convex.query(api.functions.tasks.getAllTasks.default);
   };
 
-  const getTasksAssignedToUser = async (assignedBy: Id<"tasks">) => {
-    return await convex.query(api.functions.tasks.getTaskById.default, {
-      _id: assignedBy,
-    });
+  const getTasksByClassroomCode = async (code: string) => {
+    return await convex.query(
+      api.functions.tasks.getTasksByClassroomCode.default,
+      { code },
+    );
   };
 
-  const getTasksAssignedByUser = async (assignedBy: Id<"tasks">) => {
-    return await convex.query(api.functions.tasks.getTaskById.default, {
-      _id: assignedBy,
-    });
+  const getTasksAssignedByUser = async (assignedBy: Id<"users">) => {
+    return await convex.query(
+      api.functions.tasks.getTasksAssignedByUser.default,
+      { assignedBy },
+    );
   };
 
   const updateTask = async (id: Id<"tasks">, data: ITaskForm) => {
@@ -38,6 +40,11 @@ export function useTasksService(convex: ConvexReactClient) {
       ...data,
     });
   };
+
+  const assignTaskToUser = async (
+    id: Id<"tasks">,
+    assignedTo: Id<"users">,
+  ) => {};
 
   const deleteTask = async (id: Id<"tasks">) => {
     return await convex.mutation(api.functions.tasks.deleteTask.default, {
@@ -49,8 +56,8 @@ export function useTasksService(convex: ConvexReactClient) {
     addTask,
     getTaskById,
     getAllTasks,
-    getTasksAssignedToUser,
     getTasksAssignedByUser,
+    getTasksByClassroomCode,
     updateTask,
     deleteTask,
   };
