@@ -21,8 +21,8 @@ export default defineSchema({
     title: v.string(),
     description: v.optional(v.string()),
     dueDate: v.string(),
-    completed: v.boolean(),
     code: v.union(v.id("classroomCodes"), v.string()),
     assignedBy: v.id("users"),
+    completedBy: v.array(v.id("users")),
   }).index("by_dueDate", ["dueDate"]),
 });

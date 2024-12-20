@@ -6,9 +6,9 @@ export default mutation({
     title: v.string(),
     description: v.optional(v.string()),
     dueDate: v.string(),
-    completed: v.boolean(),
     code: v.string(),
     assignedBy: v.id("users"),
+    completedBy: v.array(v.id("users")),
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert("tasks", args);

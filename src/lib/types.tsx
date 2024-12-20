@@ -29,7 +29,7 @@ export interface ITaskForm {
   title: string;
   description: string;
   dueDate: string;
-  completed: boolean;
   code: Id<"classroomCodes"> | string;
   assignedBy: Id<"users">;
+  completedBy: any[];
 }
