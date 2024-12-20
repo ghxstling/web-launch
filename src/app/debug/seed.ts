@@ -36,26 +36,39 @@ export async function useGenerateData(
       password,
       confirm,
       type,
+      code: "",
     });
   }
 
   // Seed Classroom Codes
   console.log("Seeding Classroom Codes ...");
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 3; i++) {
     let code = faker.string.alphanumeric(6).toUpperCase();
-    let teachers = await userService.getUsersByType(UserType.Teacher);
-    let createdBy = faker.helpers.arrayElement(teachers)._id;
-
+    let teachers = (await userService.getUsersByType(UserType.Teacher)).filter(
+      (t) => t.code === "",
+    );
+    let createdBy = await userService.getUserById(
+      faker.helpers.arrayElement(teachers)._id,
+    );
     while ((await classroomCodesService.getClassroomCode(code)) !== null) {
       code = faker.string.alphanumeric(6).toUpperCase();
     }
 
-    await classroomCodesService.addClassroomCode(code, createdBy);
+    await classroomCodesService.addClassroomCode(code, createdBy!._id);
+    await userService.updateUser(createdBy!._id, {
+      firstName: createdBy!.firstName,
+      lastName: createdBy!.lastName,
+      email: createdBy!.email,
+      password: createdBy!.password,
+      confirm: createdBy!.password,
+      type: UserType.Teacher,
+      code,
+    });
   }
 
   // Seed Users (Students)
   console.log("Seeding Students ...");
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 60; i++) {
     let firstName = faker.person.firstName();
     let lastName = faker.person.lastName();
     let email = faker.internet.email();
@@ -64,7 +77,7 @@ export async function useGenerateData(
     let type = UserType.Student;
     let code = faker.helpers.arrayElement(
       (await classroomCodesService.getAllClassroomCodes()).map(
-        (classroomCode: any) => classroomCode._id,
+        (classroomCode: any) => classroomCode.code,
       ),
     );
 
@@ -85,14 +98,14 @@ export async function useGenerateData(
 
   // Seed Tasks
   console.log("Seeding Tasks ...");
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 240; i++) {
     let title = faker.lorem.sentence();
     let description = faker.lorem.paragraph();
     let dueDate = faker.date.soon({ days: 28 }).toISOString();
     let completed = false;
-    let assignedTo = faker.helpers.arrayElement(
-      (await userService.getUsersByType(UserType.Student)).map(
-        (user: any) => user._id,
+    let code = faker.helpers.arrayElement(
+      (await classroomCodesService.getAllClassroomCodes()).map(
+        (c: any) => c.code,
       ),
     );
     let assignedBy = faker.helpers.arrayElement(
@@ -106,7 +119,7 @@ export async function useGenerateData(
       description,
       dueDate,
       completed,
-      assignedTo,
+      code,
       assignedBy,
     });
   }
