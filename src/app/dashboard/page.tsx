@@ -26,6 +26,7 @@ import { useTasksService } from "../../../convex/services/tasksService";
 import { Separator } from "@/components/ui/separator";
 import { TeacherDashboard } from "@/components/teacher-dashboard";
 import StudentDashboard from "@/components/student-dashboard";
+import { useToast } from "@/hooks/use-toast";
 
 const DashboardDropdown = ({ handleClick }: { handleClick: () => void }) => {
   return (
@@ -64,6 +65,8 @@ export default function Page() {
   const [dashboardContent, setDashboardContent] = useState<React.JSX.Element>();
   const [tasks, setTasks] = useState<any[] | null>(null);
 
+  const { toast } = useToast();
+
   useEffect(() => {
     const getUser = async () => {
       if (user) {
@@ -85,9 +88,9 @@ export default function Page() {
               You have assigned <b>{taskInfo.length}</b> total tasks
             </p>,
           );
-          setDashboardContent(<TeacherDashboard />);
+          setDashboardContent(<TeacherDashboard user={apiUser} />);
         } else {
-          taskInfo = await tasksService.getTasksAssignedToUser(userObj!._id);
+          taskInfo = await tasksService.getTasksByClassroomCode(userObj!.code!);
           setTasks(tasks);
 
           const completed = taskInfo.filter((task) => task.completed).length;
@@ -109,34 +112,54 @@ export default function Page() {
 
   if (apiUser) {
     return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <Card className="w-9/12 max-w-screen-lg h-full max-h-[65vh]">
-          <CardHeader>
-            <div className="flex justify-between items-center pb-1">
-              <CardTitle className="text-2xl">
+      <>
+        <CardHeader className="h-[10%]">
+          <div className="flex justify-between items-center pb-1">
+            <div className="grid gap-3 grid-flow-col">
+              <CardTitle className="text-2xl flex items-center">
                 Welcome, {apiUser.firstName} {apiUser.lastName}
               </CardTitle>
-
-              <div className="grid gap-3 grid-flow-col">
-                <CardDescription className="text-right text-black">
-                  {description}
-                </CardDescription>
-                <Separator orientation="vertical" />
-                <DashboardDropdown handleClick={() => setIsModalOpen(true)} />
-              </div>
+              <Separator orientation="vertical" />
+              <Button
+                onClick={() => {
+                  navigator.clipboard
+                    .writeText(apiUser.code)
+                    .then(() => {
+                      toast({
+                        description: "Code copied to clipboard",
+                      });
+                    })
+                    .catch((err) => {
+                      toast({
+                        description: "Failed to copy: " + err,
+                      });
+                    });
+                }}
+                className="text-sm font-medium"
+              >
+                Code: {apiUser.code}
+              </Button>
             </div>
-            <Separator />
-          </CardHeader>
-          <CardContent>{dashboardContent}</CardContent>
-          {/* User Info Modal */}
-          <UserModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            user={apiUser}
-            clerkUser={user}
-          />
-        </Card>
-      </div>
+            <div className="grid gap-3 grid-flow-col">
+              <CardDescription className="text-right text-black">
+                {description}
+              </CardDescription>
+              <Separator orientation="vertical" />
+              <DashboardDropdown handleClick={() => setIsModalOpen(true)} />
+            </div>
+          </div>
+          <Separator />
+        </CardHeader>
+        {dashboardContent}
+
+        {/* User Info Modal */}
+        <UserModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          user={apiUser}
+          clerkUser={user}
+        />
+      </>
     );
   }
 }
