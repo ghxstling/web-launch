@@ -21,7 +21,7 @@ import { LogOut, User } from "lucide-react";
 import { useUserService } from "../../../convex/services/userService";
 import { useConvex } from "convex/react";
 import { useEffect, useState } from "react";
-import { UserModal } from "@/components/user-modal";
+import { EditAccountModal } from "@/components/edit-account-modal";
 import { useTasksService } from "../../../convex/services/tasksService";
 import { Separator } from "@/components/ui/separator";
 import { TeacherDashboard } from "@/components/teacher-dashboard";
@@ -153,7 +153,7 @@ export default function Page() {
         {dashboardContent}
 
         {/* User Info Modal */}
-        <UserModal
+        <EditAccountModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           user={apiUser}

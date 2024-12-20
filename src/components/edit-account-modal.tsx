@@ -25,7 +25,7 @@ interface UserModalProps {
   clerkUser: any;
 }
 
-export function UserModal({
+export function EditAccountModal({
   isOpen,
   onClose,
   user,
