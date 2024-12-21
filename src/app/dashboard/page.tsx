@@ -78,27 +78,36 @@ export default function Page() {
         let taskInfo;
         if (userObj!.type === "teacher") {
           taskInfo = await tasksService.getTasksAssignedByUser(userObj!._id);
-          const students = await userService.getUsersByClassroomCode(
-            userObj!.code!,
-          );
+          const students = (
+            await userService.getUsersByClassroomCode(userObj!.code!)
+          ).filter((u) => u.type === "student");
           setDescription(
-            <p>
-              You have <b>{students.length}</b> students in your classroom{" "}
-              <br />
-              You have assigned <b>{taskInfo.length}</b> total tasks
-            </p>,
+            <ul>
+              <li>
+                You have <b>{students.length}</b> students in your classroom{" "}
+              </li>
+              <li>
+                You have assigned <b>{taskInfo.length}</b> total tasks
+              </li>
+            </ul>,
           );
           setDashboardContent(<TeacherDashboard user={apiUser} />);
         } else {
           taskInfo = await tasksService.getTasksByClassroomCode(userObj!.code!);
           setTasks(tasks);
 
-          const completed = taskInfo.filter((task) => task.completed).length;
+          const completed = taskInfo.filter(
+            (task) => apiUser._id in task.completedBy,
+          ).length;
           setDescription(
-            <p>
-              You have <b>{taskInfo.length}</b> incompleted tasks <br />
-              You have completed a total of <b>{completed}</b> tasks
-            </p>,
+            <ul>
+              <li>
+                You have <b>{taskInfo.length}</b> incompleted tasks
+              </li>
+              <li>
+                You have completed a total of <b>{completed}</b> tasks
+              </li>
+            </ul>,
           );
           setDashboardContent(<StudentDashboard />);
         }
