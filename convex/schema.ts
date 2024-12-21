@@ -14,7 +14,8 @@ export default defineSchema({
     password: v.string(),
     confirm: v.optional(v.string()),
     type: v.string(),
-    code: v.union(v.id("classroomCodes"), v.string()),
+    code: v.string(),
+    completedTasks: v.array(v.id("tasks")),
   }).index("by_firstName", ["firstName"]),
 
   tasks: defineTable({
