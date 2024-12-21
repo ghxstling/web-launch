@@ -15,7 +15,12 @@ export interface IRegisterForm extends ILoginForm {
   lastName: string;
   confirm: string;
   type: UserType;
-  code: Id<"classroomCodes"> | string;
+  code: string;
+}
+
+export interface UserRecord extends IRegisterForm {
+  _id?: Id<"users">;
+  completedTasks: Id<"tasks">[];
 }
 
 export interface IUpdateAccountForm {
@@ -31,5 +36,5 @@ export interface ITaskForm {
   dueDate: string;
   code: Id<"classroomCodes"> | string;
   assignedBy: Id<"users">;
-  completedBy: any[];
+  completedBy: Id<"users">[];
 }

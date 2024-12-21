@@ -1,4 +1,4 @@
-import { IRegisterForm, UserType } from "@/lib/types";
+import { UserRecord, UserType } from "@/lib/types";
 import { api } from "../_generated/api";
 import { Id } from "../_generated/dataModel";
 import { ConvexReactClient } from "convex/react";
@@ -32,19 +32,28 @@ export function useUserService(convex: ConvexReactClient) {
     );
   };
 
-  const createUser = async (data: IRegisterForm) => {
+  const createUser = async (data: UserRecord) => {
     const checkUser = await getUserByEmail(data.email);
     if (!checkUser) {
       return await convex.mutation(api.functions.users.addUser.default, {
         ...data,
+        completedTasks: [],
       });
     }
   };
 
-  const updateUser = async (id: Id<"users">, data: IRegisterForm) => {
+  const updateUser = async (id: Id<"users">, data: UserRecord) => {
+    const user = await getUserById(id);
+    const userCompletedTasks = user!.completedTasks;
+    data.completedTasks.forEach((task) => {
+      if (!userCompletedTasks.includes(task)) {
+        userCompletedTasks.push(task);
+      }
+    });
     return await convex.mutation(api.functions.users.updateUser.default, {
       _id: id,
       ...data,
+      completedTasks: userCompletedTasks,
     });
   };
 

@@ -37,13 +37,16 @@ export async function useGenerateData(
       confirm,
       type,
       code: "",
+      completedTasks: [],
     });
   }
 
   // Seed Classroom Codes
   console.log("Seeding Classroom Codes ...");
+  let codes = [];
   for (let i = 0; i < 3; i++) {
     let code = faker.string.alphanumeric(6).toUpperCase();
+    codes.push(code);
     let teachers = (await userService.getUsersByType(UserType.Teacher)).filter(
       (t) => t.code === "",
     );
@@ -63,6 +66,31 @@ export async function useGenerateData(
       confirm: createdBy!.password,
       type: UserType.Teacher,
       code,
+      completedTasks: [],
+    });
+  }
+
+  while (
+    (await userService.getUsersByType(UserType.Teacher)).filter(
+      (t) => t.code === "",
+    ).length > 0
+  ) {
+    let teacher = faker.helpers.arrayElement(
+      (await userService.getUsersByType(UserType.Teacher)).filter(
+        (t) => t.code === "",
+      ),
+    );
+    let code = faker.helpers.arrayElement(codes);
+
+    await userService.updateUser(teacher._id, {
+      firstName: teacher.firstName,
+      lastName: teacher.lastName,
+      email: teacher.email,
+      password: teacher.password,
+      confirm: teacher.password,
+      type: UserType.Teacher,
+      code,
+      completedTasks: [],
     });
   }
 
@@ -93,6 +121,7 @@ export async function useGenerateData(
       confirm,
       type,
       code,
+      completedTasks: [],
     });
   }
 
@@ -102,7 +131,6 @@ export async function useGenerateData(
     let title = faker.lorem.sentence();
     let description = faker.lorem.paragraph();
     let dueDate = faker.date.soon({ days: 28 }).toISOString();
-    let completed = false;
     let code = faker.helpers.arrayElement(
       (await classroomCodesService.getAllClassroomCodes()).map(
         (c: any) => c.code,
@@ -114,13 +142,40 @@ export async function useGenerateData(
       ),
     );
 
-    await tasksService.addTask({
+    let students = (await userService.getUsersByClassroomCode(code))
+      .filter((student: any) => student.type === UserType.Student)
+      .map((student: any) => student._id);
+    let completedBy = faker.helpers.arrayElements(
+      students,
+      faker.number.int({ min: 0, max: students.length }),
+    );
+
+    const task = await tasksService.addTask({
       title,
       description,
       dueDate,
-      completed,
+      completedBy,
       code,
       assignedBy,
+    });
+
+    completedBy.forEach(async (studentId: any) => {
+      const student = await userService.getUserById(studentId);
+      const completedTasks = student!.completedTasks;
+
+      if (!completedTasks.includes(task)) {
+        completedTasks.push(task);
+        await userService.updateUser(studentId, {
+          firstName: student!.firstName,
+          lastName: student!.lastName,
+          email: student!.email,
+          password: student!.password,
+          confirm: student!.password,
+          type: UserType.Student,
+          code: student!.code,
+          completedTasks,
+        });
+      }
     });
   }
 }
