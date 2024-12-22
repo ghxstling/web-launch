@@ -15,8 +15,8 @@ import { useTasksService } from "../../convex/services/tasksService";
 import { useUserService } from "../../convex/services/userService";
 import { CardContent, CardFooter } from "./ui/card";
 import { Button } from "./ui/button";
-import { ChevronRight } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import { CreateTaskModal } from "./create-task-modal";
 
 interface TeacherDashboardProps {
   user: any;
@@ -25,7 +25,7 @@ interface TeacherDashboardProps {
 const css = {
   noData: "flex justify-center text-sm text-gray-400 mt-48",
   listEntryTitle: "text-sm font-medium truncate max-w-sm",
-  listEntryDesc: "text-wrap w-[30rem]",
+  listEntryDesc: "text-wrap w-[28rem]",
 };
 
 export function TeacherDashboard({ user }: TeacherDashboardProps) {
@@ -36,6 +36,7 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
 
   const [students, setStudents] = useState<any[]>([]);
   const [tasks, setTasks] = useState<any[]>([]);
+  const [createTaskModal, setCreateTaskModal] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,9 +73,9 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
               {student.firstName} {student.lastName}
             </p>
           </AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent className="w-full">
             <Separator className="mb-4" />
-            <ul className={css.listEntryDesc + " w-60"}>
+            <ul className={css.listEntryDesc + " w-fit "}>
               <li>
                 <b>Email:</b> {student.email}
               </li>
@@ -114,23 +115,20 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
               </li>
               <li>
                 <b>Due Date:</b>{" "}
-                {new Date(task.dueDate).toLocaleDateString("en-NZ", {
+                {new Date(task.dueDate).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
                 })}
+                {", "}
+                {new Date(task.dueDate).toLocaleTimeString("en-US", {
+                  hour: "numeric",
+                  minute: "numeric",
+                })}
               </li>
               <li>
-                <b>Tasks Completed:</b>{" "}
-                {
-                  tasks.filter(
-                    (t) => t.completed === true && t.code === task.code,
-                  ).length
-                }{" "}
-                out of {tasks.length} tasks
-              </li>
-              <li>
-                <b>Last logged in:</b> random date
+                <b># of Students Completed:</b> {task.completedBy.length} out of{" "}
+                {students.length} students
               </li>
             </ul>
           </AccordionContent>
@@ -175,10 +173,19 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
         </CardContent>
         <CardFooter className="grid grid-flow-col pt-6 h-[10%]">
           <div className="flex gap-2 justify-end">
-            <Button>Create New Task</Button>
+            <Button onClick={() => setCreateTaskModal(true)}>
+              Create New Task
+            </Button>
             <Button>Invite Student</Button>
           </div>
         </CardFooter>
+
+        {/* Create Task Modal */}
+        <CreateTaskModal
+          isOpen={createTaskModal}
+          onClose={() => setCreateTaskModal(false)}
+          user={user}
+        />
       </>
     );
   }
