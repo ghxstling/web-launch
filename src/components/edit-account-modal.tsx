@@ -13,7 +13,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { updateSchema } from "@/lib/zodSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { IRegisterForm, IUpdateAccountForm } from "@/lib/types";
+import { UserRecord, IUpdateAccountForm } from "@/lib/types";
 import { useUserService } from "../../convex/services/userService";
 import { useConvex } from "convex/react";
 import Link from "next/link";
@@ -21,7 +21,7 @@ import Link from "next/link";
 interface UserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  user: IRegisterForm;
+  user: UserRecord;
   clerkUser: any;
 }
 
@@ -83,6 +83,7 @@ export function EditAccountModal({
         confirm: data.confirm,
         type: user.type,
         code: user.code,
+        completedTasks: user.completedTasks,
       });
       resetEffects();
       setMessage(["Account updated successfully", "text-green-500 text-sm"]);
