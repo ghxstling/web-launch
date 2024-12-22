@@ -1,4 +1,4 @@
-import { UserRecord, UserType } from "@/lib/types";
+import { UserRecord, UserType, IRegisterForm } from "@/lib/types";
 import { api } from "../_generated/api";
 import { Id } from "../_generated/dataModel";
 import { ConvexReactClient } from "convex/react";
@@ -32,7 +32,7 @@ export function useUserService(convex: ConvexReactClient) {
     );
   };
 
-  const createUser = async (data: UserRecord) => {
+  const createUser = async (data: UserRecord | IRegisterForm) => {
     const checkUser = await getUserByEmail(data.email);
     if (!checkUser) {
       return await convex.mutation(api.functions.users.addUser.default, {
