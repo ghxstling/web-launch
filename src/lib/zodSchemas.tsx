@@ -65,3 +65,25 @@ export const updateSchema = z
     message: "Passwords do not match",
     path: ["confirm"],
   });
+
+export const taskSchema = z
+  .object({
+    title: z
+      .string()
+      .min(1, {
+        message: "Title is required",
+      })
+      .max(30, {
+        message: "Title must be no longer than 30 characters",
+      }),
+    description: z
+      .string()
+      .min(1, {
+        message: "Description is required",
+      })
+      .max(200, {
+        message: "Description must be no longer than 200 characters",
+      }),
+    dueDate: z.string().min(1, { message: "Please select a date and time" }),
+  })
+  .required();
