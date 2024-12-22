@@ -176,7 +176,6 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
             <Button onClick={() => setCreateTaskModal(true)}>
               Create New Task
             </Button>
-            <Button>Invite Student</Button>
           </div>
         </CardFooter>
 
