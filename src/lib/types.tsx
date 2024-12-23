@@ -18,7 +18,7 @@ export interface IRegisterForm extends ILoginForm {
   code: string;
 }
 
-export interface UserRecord extends IRegisterForm {
+export interface User extends IRegisterForm {
   _id?: Id<"users">;
   completedTasks: Id<"tasks">[];
 }
