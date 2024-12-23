@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -5,23 +6,23 @@ import { SignOutButton, SignInButton, useUser } from "@clerk/nextjs";
 import { useUserService } from "../../../convex/services/userService";
 import { Button } from "@/components/ui/button";
 import { useGenerateData } from "./seed";
-import { useConvex } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import { useConvex } from "convex/react";
 
 export default function DebugPage() {
-  const convex = useConvex();
   const { isLoaded, isSignedIn, user } = useUser();
-  const userService = useUserService(convex);
+  const convex = useConvex();
+  const userService = useUserService();
 
   const [apiResponse, setApiResponse] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  const [apiUser, setApiUser] = useState<any>(null);
+  const [apiUser, setApiUser] = useState<unknown>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       if (user) {
         const session = user!.primaryEmailAddress!.emailAddress;
-        let apiUser = await userService.getUserByEmail(session);
+        const apiUser = userService.getUserByEmail(session);
         setApiUser(apiUser);
       }
     };
@@ -29,12 +30,12 @@ export default function DebugPage() {
     if (isLoaded && isSignedIn) {
       fetchUser();
     }
-  }, [isLoaded, isSignedIn, userService.getUserByEmail]);
+  }, [isLoaded, isSignedIn, user, userService, userService.getUserByEmail]);
 
   const generateData = async () => {
     setError(null);
     setApiResponse({ message: "Generating data..." });
-    useGenerateData(123, convex)
+    useGenerateData(123)
       .then(() => {
         setApiResponse({ message: "Seeding completed" });
       })

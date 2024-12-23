@@ -1,29 +1,26 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { faker } from "@faker-js/faker";
 import { useClassroomCodesService } from "../../../convex/services/classroomCodesService";
 import { useTasksService } from "../../../convex/services/tasksService";
 import { useUserService } from "../../../convex/services/userService";
 import { UserType } from "@/lib/types";
-import { ConvexReactClient } from "convex/react";
 
-export async function useGenerateData(
-  seedOption: number,
-  convex: ConvexReactClient,
-) {
-  const userService = useUserService(convex);
-  const tasksService = useTasksService(convex);
-  const classroomCodesService = useClassroomCodesService(convex);
+export async function useGenerateData(seedOption: number) {
+  const userService = useUserService();
+  const tasksService = useTasksService();
+  const classroomCodesService = useClassroomCodesService();
 
   faker.seed(seedOption);
 
   // Seed Users (Teachers)
   console.log("Seeding Teachers ...");
   for (let i = 0; i < 4; i++) {
-    let firstName = faker.person.firstName();
-    let lastName = faker.person.lastName();
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
     let email = faker.internet.email();
-    let password = faker.internet.password();
-    let confirm = password;
-    let type = UserType.Teacher;
+    const password = faker.internet.password();
+    const confirm = password;
+    const type = UserType.Teacher;
 
     while ((await userService.getUserByEmail(email)) !== null) {
       email = faker.internet.email();
@@ -43,14 +40,14 @@ export async function useGenerateData(
 
   // Seed Classroom Codes
   console.log("Seeding Classroom Codes ...");
-  let codes = [];
+  const codes = [];
   for (let i = 0; i < 5; i++) {
     let code = faker.string.alphanumeric(6).toUpperCase();
     codes.push(code);
-    let teachers = (await userService.getUsersByType(UserType.Teacher)).filter(
-      (t) => t.code === "",
-    );
-    let createdBy = await userService.getUserById(
+    const teachers = (
+      await userService.getUsersByType(UserType.Teacher)
+    ).filter((t) => t.code === "");
+    const createdBy = await userService.getUserById(
       faker.helpers.arrayElement(teachers)._id,
     );
     while ((await classroomCodesService.getClassroomCode(code)) !== null) {
@@ -75,12 +72,12 @@ export async function useGenerateData(
       (t) => t.code === "",
     ).length > 0
   ) {
-    let teacher = faker.helpers.arrayElement(
+    const teacher = faker.helpers.arrayElement(
       (await userService.getUsersByType(UserType.Teacher)).filter(
         (t) => t.code === "",
       ),
     );
-    let code = faker.helpers.arrayElement(codes);
+    const code = faker.helpers.arrayElement(codes);
 
     await userService.updateUser(teacher._id, {
       firstName: teacher.firstName,
@@ -97,13 +94,13 @@ export async function useGenerateData(
   // Seed Users (Students)
   console.log("Seeding Students ...");
   for (let i = 0; i < 10; i++) {
-    let firstName = faker.person.firstName();
-    let lastName = faker.person.lastName();
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
     let email = faker.internet.email();
-    let password = faker.internet.password();
-    let confirm = password;
-    let type = UserType.Student;
-    let code = faker.helpers.arrayElement(
+    const password = faker.internet.password();
+    const confirm = password;
+    const type = UserType.Student;
+    const code = faker.helpers.arrayElement(
       (await classroomCodesService.getAllClassroomCodes()).map(
         (classroomCode: any) => classroomCode.code,
       ),
@@ -128,24 +125,24 @@ export async function useGenerateData(
   // Seed Tasks
   console.log("Seeding Tasks ...");
   for (let i = 0; i < 50; i++) {
-    let title = faker.lorem.sentence();
-    let description = faker.lorem.paragraph();
-    let dueDate = faker.date.soon({ days: 28 }).toISOString();
-    let code = faker.helpers.arrayElement(
+    const title = faker.lorem.sentence();
+    const description = faker.lorem.paragraph();
+    const dueDate = faker.date.soon({ days: 28 }).toISOString();
+    const code = faker.helpers.arrayElement(
       (await classroomCodesService.getAllClassroomCodes()).map(
         (c: any) => c.code,
       ),
     );
-    let assignedBy = faker.helpers.arrayElement(
+    const assignedBy = faker.helpers.arrayElement(
       (await userService.getUsersByClassroomCode(code))
         .filter((user: any) => user.type === UserType.Teacher)
         .map((user: any) => user._id),
     );
 
-    let students = (await userService.getUsersByClassroomCode(code))
+    const students = (await userService.getUsersByClassroomCode(code))
       .filter((student: any) => student.type === UserType.Student)
       .map((student: any) => student._id);
-    let completedBy = faker.helpers.arrayElements(
+    const completedBy = faker.helpers.arrayElements(
       students,
       faker.number.int({ min: 0, max: students.length }),
     );

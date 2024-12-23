@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
@@ -9,7 +10,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useConvex } from "convex/react";
 import { useEffect, useState } from "react";
 import { useTasksService } from "../../convex/services/tasksService";
 import { useUserService } from "../../convex/services/userService";
@@ -30,13 +30,13 @@ const css = {
 
 export function TeacherDashboard({ user }: TeacherDashboardProps) {
   const { isLoaded } = useUser();
-  const convex = useConvex();
-  const userService = useUserService(convex);
-  const tasksService = useTasksService(convex);
+
+  const userService = useUserService();
+  const tasksService = useTasksService();
 
   const [students, setStudents] = useState<any[]>([]);
   const [tasks, setTasks] = useState<any[]>([]);
-  const [createTaskModal, setCreateTaskModal] = useState<boolean>(true);
+  const [createTaskModal, setCreateTaskModal] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,7 +55,7 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
 
     if (isLoaded) fetchData();
     return;
-  }, [user, userService, tasksService]);
+  }, [user, userService, tasksService, isLoaded]);
 
   if (isLoaded) {
     let studentsList, tasksList;

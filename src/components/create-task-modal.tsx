@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,7 +21,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -36,7 +35,7 @@ import {
 } from "@/components/ui/form";
 
 import { useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import { taskSchema } from "@/lib/zodSchemas";
 import { ITaskForm } from "@/lib/types";
@@ -45,9 +44,7 @@ import { format } from "date-fns";
 import { CalendarClock, Calendar as CalendarIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import React from "react";
-import { useConvex } from "convex/react";
 import { useTasksService } from "../../convex/services/tasksService";
-import { useUserService } from "../../convex/services/userService";
 
 function DatePicker({ value, onChange }: any) {
   return (
@@ -77,7 +74,7 @@ function DatePicker({ value, onChange }: any) {
   );
 }
 
-function TimePicker({ value, onChange }: any) {
+function TimePicker({ value, onChange }: { value: string; onChange: any }) {
   const timeOptions = Array.from({ length: 24 * 2 }).map((_, i) => {
     const time =
       "" +
@@ -118,8 +115,7 @@ interface TaskModalProps {
 
 export function CreateTaskModal({ isOpen, onClose, user }: TaskModalProps) {
   const { toast } = useToast();
-  const convex = useConvex();
-  const tasksService = useTasksService(convex);
+  const tasksService = useTasksService();
 
   const [message, setMessage] = useState<string[] | null>(null);
   const [loadingMessage, setLoadingMessage] = useState(false);
@@ -178,12 +174,12 @@ export function CreateTaskModal({ isOpen, onClose, user }: TaskModalProps) {
     form.reset();
   };
 
-  const onSubmit = async (data: ITaskForm) => {
+  const onSubmit = (data: ITaskForm) => {
     resetEffects();
     setLoadingMessage(true);
 
     try {
-      await tasksService.addTask({
+      tasksService.addTask({
         title: data.title,
         description: data.description,
         dueDate: data.dueDate,
@@ -275,7 +271,7 @@ export function CreateTaskModal({ isOpen, onClose, user }: TaskModalProps) {
             <FormField
               control={form.control}
               name="dueDate"
-              render={({ field }) => (
+              render={() => (
                 <FormItem className={css.FormItem}>
                   <FormLabel htmlFor="dueDate" className={css.FormLabel}>
                     Due Date

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,6 @@ import { registerSchema } from "@/lib/zodSchemas";
 import { useState } from "react";
 import { useSignUp } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useConvex } from "convex/react";
 import { useUserService } from "../../convex/services/userService";
 import { useClassroomCodesService } from "../../convex/services/classroomCodesService";
 import { useRouter } from "next/navigation";
@@ -26,14 +26,14 @@ import Link from "next/link";
 export function RegisterForm() {
   const { isLoaded, signUp, setActive } = useSignUp();
   const router = useRouter();
-  const convex = useConvex();
-  const userService = useUserService(convex);
-  const classroomCodesService = useClassroomCodesService(convex);
+
+  const userService = useUserService();
+  const classroomCodesService = useClassroomCodesService();
 
   const [loadingMessage, setLoadingMessage] = useState(false);
   const [verifying, setVerifying] = useState(false);
-  const [message, setMessage] = useState<String | undefined>(undefined);
-  const [verifyingMessage, setVerifyingMessage] = useState<String | undefined>(
+  const [message, setMessage] = useState<string | undefined>(undefined);
+  const [verifyingMessage, setVerifyingMessage] = useState<string | undefined>(
     undefined,
   );
   const [code, setCode] = useState("");

@@ -1,13 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { SignOutButton, useUser } from "@clerk/clerk-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,7 +14,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut, User } from "lucide-react";
 import { useUserService } from "../../../convex/services/userService";
-import { useConvex } from "convex/react";
 import { useEffect, useState } from "react";
 import { EditAccountModal } from "@/components/edit-account-modal";
 import { useTasksService } from "../../../convex/services/tasksService";
@@ -55,9 +49,10 @@ const DashboardDropdown = ({ handleClick }: { handleClick: () => void }) => {
 
 export default function Page() {
   const { isSignedIn, user, isLoaded } = useUser();
-  const convex = useConvex();
-  const userService = useUserService(convex);
-  const tasksService = useTasksService(convex);
+  const { toast } = useToast();
+
+  const userService = useUserService();
+  const tasksService = useTasksService();
 
   const [apiUser, setApiUser] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -65,12 +60,10 @@ export default function Page() {
   const [dashboardContent, setDashboardContent] = useState<React.JSX.Element>();
   const [tasks, setTasks] = useState<any[] | null>(null);
 
-  const { toast } = useToast();
-
   useEffect(() => {
-    const getUser = async () => {
+    const fetchData = async () => {
       if (user) {
-        let userObj = await userService.getUserByEmail(
+        const userObj = await userService.getUserByEmail(
           user.primaryEmailAddress!.emailAddress,
         );
         setApiUser(userObj);
@@ -81,6 +74,7 @@ export default function Page() {
           const students = (
             await userService.getUsersByClassroomCode(userObj!.code!)
           ).filter((u) => u.type === "student");
+
           setDescription(
             <ul>
               <li>
@@ -93,11 +87,13 @@ export default function Page() {
           );
           setDashboardContent(<TeacherDashboard user={apiUser} />);
         } else {
-          taskInfo = await tasksService.getTasksByClassroomCode(userObj!.code!);
+          taskInfo = await tasksService.getTasksByClassroomCode(
+            userObj!.code!,
+          )!;
           setTasks(tasks);
 
           const completed = taskInfo.filter(
-            (task) => apiUser._id in task.completedBy,
+            (task) => apiUser!._id in task.completedBy,
           ).length;
           setDescription(
             <ul>
@@ -115,9 +111,9 @@ export default function Page() {
     };
 
     if (isLoaded && isSignedIn) {
-      getUser();
+      fetchData();
     }
-  }, [user, isLoaded, isSignedIn, userService, tasksService]);
+  }, [user, userService, tasksService, isLoaded, isSignedIn, apiUser, tasks]);
 
   if (apiUser) {
     return (

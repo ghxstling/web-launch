@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "./ui/button";
@@ -13,15 +14,14 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { updateSchema } from "@/lib/zodSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { UserRecord, IUpdateAccountForm } from "@/lib/types";
+import { User, IUpdateAccountForm } from "@/lib/types";
 import { useUserService } from "../../convex/services/userService";
-import { useConvex } from "convex/react";
 import Link from "next/link";
 
 interface UserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  user: UserRecord;
+  user: User;
   clerkUser: any;
 }
 
@@ -31,8 +31,7 @@ export function EditAccountModal({
   user,
   clerkUser,
 }: UserModalProps) {
-  const convex = useConvex();
-  const userService = useUserService(convex);
+  const userService = useUserService();
 
   const [message, setMessage] = useState<string[] | null>(null);
   const [loadingMessage, setLoadingMessage] = useState(false);
@@ -101,7 +100,7 @@ export function EditAccountModal({
         <DialogHeader>
           <DialogTitle>Edit account</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
+            Make changes to your profile here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
