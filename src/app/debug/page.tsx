@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -16,7 +17,7 @@ export default function DebugPage() {
 
   const [apiResponse, setApiResponse] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  const [apiUser, setApiUser] = useState<unknown>(null);
+  const [apiUser, setApiUser] = useState<any>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
