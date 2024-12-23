@@ -9,6 +9,6 @@ export default query({
     return await ctx.db
       .query("tasks")
       .filter((q) => q.eq(q.field("_id"), args._id))
-      .collect();
+      .first();
   },
 });
