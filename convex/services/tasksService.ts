@@ -1,9 +1,11 @@
 import { ITaskForm } from "@/lib/types";
 import { api } from "../_generated/api";
 import { Id } from "../_generated/dataModel";
-import { ConvexReactClient } from "convex/react";
+import { useConvex } from "convex/react";
 
-export function useTasksService(convex: ConvexReactClient) {
+export function useTasksService() {
+  const convex = useConvex();
+
   const addTask = async (data: ITaskForm) => {
     return await convex.mutation(api.functions.tasks.addTask.default, {
       ...data,
@@ -40,11 +42,6 @@ export function useTasksService(convex: ConvexReactClient) {
       ...data,
     });
   };
-
-  const assignTaskToUser = async (
-    id: Id<"tasks">,
-    assignedTo: Id<"users">,
-  ) => {};
 
   const deleteTask = async (id: Id<"tasks">) => {
     return await convex.mutation(api.functions.tasks.deleteTask.default, {

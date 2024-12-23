@@ -1,9 +1,11 @@
-import { UserRecord, UserType, IRegisterForm } from "@/lib/types";
+import { User, UserType, IRegisterForm } from "@/lib/types";
 import { api } from "../_generated/api";
 import { Id } from "../_generated/dataModel";
-import { ConvexReactClient } from "convex/react";
+import { useConvex } from "convex/react";
 
-export function useUserService(convex: ConvexReactClient) {
+export function useUserService() {
+  const convex = useConvex();
+
   const getUserByEmail = async (email: string) => {
     return await convex.query(api.functions.users.getUserByEmail.default, {
       email,
@@ -32,7 +34,7 @@ export function useUserService(convex: ConvexReactClient) {
     );
   };
 
-  const createUser = async (data: UserRecord | IRegisterForm) => {
+  const createUser = async (data: User | IRegisterForm) => {
     const checkUser = await getUserByEmail(data.email);
     if (!checkUser) {
       return await convex.mutation(api.functions.users.addUser.default, {
@@ -42,7 +44,7 @@ export function useUserService(convex: ConvexReactClient) {
     }
   };
 
-  const updateUser = async (id: Id<"users">, data: UserRecord) => {
+  const updateUser = async (id: Id<"users">, data: User) => {
     const user = await getUserById(id);
     const userCompletedTasks = user!.completedTasks;
     data.completedTasks.forEach((task) => {

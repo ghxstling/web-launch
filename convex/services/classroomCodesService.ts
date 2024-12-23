@@ -1,8 +1,10 @@
 import { api } from "../_generated/api";
 import { Id } from "../_generated/dataModel";
-import { ConvexReactClient } from "convex/react";
+import { useConvex } from "convex/react";
 
-export function useClassroomCodesService(convex: ConvexReactClient) {
+export function useClassroomCodesService() {
+  const convex = useConvex();
+
   const addClassroomCode = async (code: string, createdBy: Id<"users">) => {
     return await convex.mutation(
       api.functions.classroomCodes.addClassroomCode.default,
