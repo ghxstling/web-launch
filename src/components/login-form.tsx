@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import Link from "next/link";
@@ -23,15 +24,13 @@ export function LoginForm() {
   const { isLoaded, signIn, setActive } = useSignIn();
   const router = useRouter();
 
-  const [message, setMessage] = useState<String | undefined>(undefined);
+  const [message, setMessage] = useState<string | undefined>(undefined);
   const [loadingMessage, setLoadingMessage] = useState(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const togglePassword = () => {
     setShowPassword((prevState) => !prevState);
   };
-
-  if (!isLoaded) return null;
 
   const {
     control,
@@ -61,7 +60,7 @@ export function LoginForm() {
       });
 
       if (user.status === "complete") {
-        await setActive({ session: user.createdSessionId });
+        await setActive!({ session: user.createdSessionId });
         router.push("/dashboard");
       }
     } catch (err: any) {
@@ -69,6 +68,8 @@ export function LoginForm() {
       setMessage(err.message);
     }
   };
+
+  if (!isLoaded) return null;
 
   return (
     <Card className="mx-auto w-full max-w-sm">
