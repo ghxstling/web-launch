@@ -32,6 +32,7 @@ import type * as functions_users_deleteUser from "../functions/users/deleteUser.
 import type * as functions_users_getAllUsers from "../functions/users/getAllUsers.js";
 import type * as functions_users_getUserByEmail from "../functions/users/getUserByEmail.js";
 import type * as functions_users_getUserById from "../functions/users/getUserById.js";
+import type * as functions_users_getUsersByClassroomCode from "../functions/users/getUsersByClassroomCode.js";
 import type * as functions_users_getUsersByType from "../functions/users/getUsersByType.js";
 import type * as functions_users_updateUser from "../functions/users/updateUser.js";
 import type * as services_classroomCodesService from "../services/classroomCodesService.js";
@@ -66,6 +67,7 @@ declare const fullApi: ApiFromModules<{
   "functions/users/getAllUsers": typeof functions_users_getAllUsers;
   "functions/users/getUserByEmail": typeof functions_users_getUserByEmail;
   "functions/users/getUserById": typeof functions_users_getUserById;
+  "functions/users/getUsersByClassroomCode": typeof functions_users_getUsersByClassroomCode;
   "functions/users/getUsersByType": typeof functions_users_getUsersByType;
   "functions/users/updateUser": typeof functions_users_updateUser;
   "services/classroomCodesService": typeof services_classroomCodesService;
