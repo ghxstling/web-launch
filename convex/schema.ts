@@ -16,7 +16,7 @@ export default defineSchema({
     type: v.string(),
     code: v.string(),
     completedTasks: v.array(v.id("tasks")),
-  }).index("by_firstName", ["firstName"]),
+  }).index("by_email", ["email"]),
 
   tasks: defineTable({
     title: v.string(),
