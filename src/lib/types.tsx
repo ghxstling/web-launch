@@ -38,3 +38,7 @@ export interface ITaskForm {
   assignedBy: Id<"users">;
   completedBy: Id<"users">[];
 }
+
+export interface Task extends ITaskForm {
+  _id?: Id<"tasks">;
+}
