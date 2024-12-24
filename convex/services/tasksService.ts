@@ -13,6 +13,45 @@ export function useTasksService() {
     });
   };
 
+  const addUserToCompletedBy = async (
+    _id: Id<"tasks">,
+    userId: Id<"users">,
+  ) => {
+    const task = await getTaskById(_id);
+    const completedBy = task!.completedBy;
+    if (!completedBy.includes(userId)) {
+      completedBy.push(userId);
+    }
+    return await updateTask(_id, {
+      title: task!.title,
+      description: task!.description || "",
+      dueDate: task!.dueDate,
+      code: task!.code,
+      assignedBy: task!.assignedBy,
+      completedBy,
+    });
+  };
+
+  const removeUserFromCompletedBy = async (
+    _id: Id<"tasks">,
+    userId: Id<"users">,
+  ) => {
+    const task = await getTaskById(_id);
+    const completedBy = task!.completedBy;
+    const index = completedBy.findIndex((id) => id === userId);
+    if (index !== -1) {
+      completedBy.splice(index, 1);
+    }
+    return await updateTask(_id, {
+      title: task!.title,
+      description: task!.description || "",
+      dueDate: task!.dueDate,
+      code: task!.code,
+      assignedBy: task!.assignedBy,
+      completedBy,
+    });
+  };
+
   const getTaskById = async (id: Id<"tasks">) => {
     return await convex.query(api.functions.tasks.getTaskById.default, {
       _id: id,
@@ -66,6 +105,8 @@ export function useTasksService() {
     getAllTasks,
     getTasksAssignedByUser,
     getTasksByClassroomCode,
+    addUserToCompletedBy,
+    removeUserFromCompletedBy,
     updateTask,
     deleteTask,
   };
