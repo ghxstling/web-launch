@@ -11,21 +11,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
+import { columns } from "./columns";
+import { DataTable } from "./data-table";
 import { useUser } from "@clerk/nextjs";
-import { useTasksService } from "../../../../convex/services/tasksService";
-import { useUserService } from "../../../../convex/services/userService";
-import { useState, useEffect } from "react";
+import { useTasksService } from "@/../convex/services/tasksService";
+import { useState, useEffect, useMemo } from "react";
 
 interface StudentDashboardProps {
   user: any;
@@ -44,7 +34,6 @@ const css = {
 export default function StudentDashboard({ user }: StudentDashboardProps) {
   const { isLoaded } = useUser();
 
-  const userService = useUserService();
   const tasksService = useTasksService();
 
   // const [announcements, setAnnouncements] = useState<any[]>([]);
@@ -53,25 +42,43 @@ export default function StudentDashboard({ user }: StudentDashboardProps) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // const students = (
-        //   await userService.getUsersByClassroomCode(user.code!)
-        // ).filter((u) => u.type === "student");
-        const tasks = await tasksService.getTasksByClassroomCode(user.code);
-
-        // setStudents(students);
-        setTasks(tasks);
+        const data = await tasksService.getTasksByClassroomCode(user.code);
+        setTasks(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     if (isLoaded) fetchData();
-    return;
-  }, [user, userService, tasksService, isLoaded]);
+  }, [user, tasksService, isLoaded]);
+
+  const sortedTasks = useMemo(() => {
+    return tasks
+      .map((task: any) => {
+        return {
+          ...task,
+          isCompleted: task.completedBy.includes(user._id)
+            ? "Complete"
+            : "Incomplete",
+        };
+      })
+      .sort((a: any, b: any) => {
+        if (a.isCompleted === b.isCompleted) {
+          return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+        }
+        return a.isCompleted === "Complete" ? 1 : -1;
+      });
+  }, [tasks, user._id]);
+
+  const memoizedColumns = useMemo(() => columns(user._id), [user._id]);
+
+  const children = useMemo(
+    () => <DataTable columns={memoizedColumns} data={sortedTasks} />,
+    [memoizedColumns, sortedTasks],
+  );
 
   if (!isLoaded) return;
 
-  let announcementsList, tasksList;
   // TODO: implement announcements table using <Accordion />
 
   // if (students.length !== 0) {
@@ -107,77 +114,15 @@ export default function StudentDashboard({ user }: StudentDashboardProps) {
   //   ));
   // } else {
   // }
-  announcementsList = (
-    <div>
-      {user.completedTasks.map((taskId: any) => (
-        <>
-          <p key={taskId}>{taskId}</p>
-        </>
-      ))}
-    </div>
+  const announcementsList = (
+    <div className={css.noData}>No new announcements</div>
   );
-
-  if (tasks.length !== 0) {
-    tasksList = tasks.map((task) => (
-      <div
-        key={task._id}
-        className={task.completedBy.includes(user._id) ? "bg-green-100" : ""}
-      >
-        <AccordionItem value={task._id}>
-          <AccordionTrigger
-            className={
-              (tasks.findIndex((s) => s._id === task._id) === 0
-                ? "mb-2"
-                : "my-2") + " py-0"
-            }
-          >
-            <p className={css.listEntryTitle}>{task.title}</p>
-          </AccordionTrigger>
-          <AccordionContent>
-            <Separator className="mb-4" />
-            <ul className={css.listEntryDesc}>
-              <li>
-                <b>ID:</b> {task._id}
-              </li>
-              <li>
-                <b>Description:</b>{" "}
-                {task.description ? task.description : "N/A"}
-              </li>
-              <li>
-                <b>Due Date:</b>{" "}
-                {new Date(task.dueDate).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-                {", "}
-                {new Date(task.dueDate).toLocaleTimeString("en-US", {
-                  hour: "numeric",
-                  minute: "numeric",
-                })}
-              </li>
-              <li>
-                <b># of Students Completed:</b> {task.completedBy.length} out of{" "}
-                {231123213} students
-              </li>
-              <li>
-                <b>Status:</b>{" "}
-                {task.completedBy.includes(user._id) ? "Completed" : "Pending"}
-              </li>
-            </ul>
-          </AccordionContent>
-        </AccordionItem>
-      </div>
-    ));
-  } else {
-    tasksList = <div className={css.noData}>No tasks assigned</div>;
-  }
 
   return (
     <>
-      <CardContent className="py-0 h-[80%]">
+      <CardContent className="py-0">
         <div className="flex flex-row justify-between w-full">
-          <div className={css.list + ` w-[calc(40%-0.5rem)] max-w-[40%]`}>
+          <div className={css.list + ` w-[calc(30%-0.5rem)] max-w-[30%]`}>
             <h1 className={css.listHeading}>Announcements</h1>
             <ScrollArea type="hover" className={css.listScrollArea}>
               <Accordion type="single" collapsible className="w-full">
@@ -185,21 +130,17 @@ export default function StudentDashboard({ user }: StudentDashboardProps) {
               </Accordion>
             </ScrollArea>
           </div>
-          <div className={css.list + ` w-[calc(60%-0.5rem)] max-w-[60%]`}>
+          <div className={css.list + ` w-[calc(70%-0.5rem)] max-w-[70%]`}>
             <h1 className={css.listHeading}>Your Tasks</h1>
-            <ScrollArea type="hover" className={css.listScrollArea}>
-              <Accordion type="single" collapsible className="w-full">
-                {tasksList}
-              </Accordion>
+            <ScrollArea
+              type="hover"
+              className="w-full h-[40rem] rounded-md border px-4"
+            >
+              {children}
             </ScrollArea>
           </div>
         </div>
       </CardContent>
-      <CardFooter className="grid grid-flow-col pt-6 h-[10%]">
-        <div className="flex gap-2 justify-end">
-          <Button onClick={() => alert(true)}>Create New Task</Button>
-        </div>
-      </CardFooter>
     </>
   );
 }
