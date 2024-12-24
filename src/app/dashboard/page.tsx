@@ -13,13 +13,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LogOut, User } from "lucide-react";
-import { useUserService } from "../../../convex/services/userService";
 import { useEffect, useState } from "react";
-import { EditAccountModal } from "@/components/edit-account-modal";
-import { useTasksService } from "../../../convex/services/tasksService";
+import { useUserService } from "@/../convex/services/userService";
+import { useTasksService } from "@/../convex/services/tasksService";
 import { Separator } from "@/components/ui/separator";
-import { TeacherDashboard } from "@/components/teacher-dashboard";
-import StudentDashboard from "@/components/student-dashboard";
+import { EditAccountModal } from "@/components/modal/edit-account-modal";
+import { TeacherDashboard } from "@/components/dashboard/teacher-dashboard";
+import StudentDashboard from "@/components/dashboard/student/student-dashboard";
 import { useToast } from "@/hooks/use-toast";
 
 const DashboardDropdown = ({ handleClick }: { handleClick: () => void }) => {
@@ -36,7 +36,7 @@ const DashboardDropdown = ({ handleClick }: { handleClick: () => void }) => {
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <LogOut />
-          <SignOutButton>
+          <SignOutButton redirectUrl="/">
             <DropdownMenuLabel className="text-red-600">
               Sign Out
             </DropdownMenuLabel>
@@ -91,21 +91,33 @@ export default function Page() {
             userObj!.code!,
           )!;
           setTasks(tasks);
-
-          const completed = taskInfo.filter(
-            (task) => apiUser!._id in task.completedBy,
-          ).length;
           setDescription(
             <ul>
               <li>
-                You have <b>{taskInfo.length}</b> incompleted tasks
+                You have{" "}
+                <b>{taskInfo.length - apiUser?.completedTasks.length}</b>{" "}
+                incomplete tasks
               </li>
               <li>
-                You have completed a total of <b>{completed}</b> tasks
+                Your next task is due on{" "}
+                <b>
+                  {new Date(taskInfo[0].dueDate).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </b>
+                {" at "}
+                <b>
+                  {new Date(taskInfo[0].dueDate).toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "numeric",
+                  })}
+                </b>
               </li>
             </ul>,
           );
-          setDashboardContent(<StudentDashboard />);
+          setDashboardContent(<StudentDashboard user={apiUser} />);
         }
       }
     };
