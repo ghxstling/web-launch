@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { loginSchema } from "@/lib/zodSchemas";
+import { loginSchema } from "@/lib/zod";
 import { useState } from "react";
 import { useSignIn } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";

@@ -14,12 +14,12 @@ import { Label } from "@/components/ui/label";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { IRegisterForm } from "@/lib/types";
-import { registerSchema } from "@/lib/zodSchemas";
+import { registerSchema } from "@/lib/zod";
 import { useState } from "react";
 import { useSignUp } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useUserService } from "../../convex/services/userService";
-import { useClassroomCodesService } from "../../convex/services/classroomCodesService";
+import { useUserService } from "../../../convex/services/userService";
+import { useClassroomCodesService } from "../../../convex/services/classroomCodesService";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { RegisterForm } from "@/components/register-form";
+import { RegisterForm } from "@/components/auth/register-form";
 import { useUser } from "@clerk/clerk-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
