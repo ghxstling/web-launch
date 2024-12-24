@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { updateSchema } from "@/lib/zodSchemas";
+import { updateSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { User, IUpdateAccountForm } from "@/lib/types";
