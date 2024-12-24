@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,7 @@ import { updateSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { User, IUpdateAccountForm } from "@/lib/types";
-import { useUserService } from "../../convex/services/userService";
+import { useUserService } from "@/../convex/services/userService";
 import Link from "next/link";
 
 interface UserModalProps {

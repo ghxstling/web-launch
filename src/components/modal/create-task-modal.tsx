@@ -44,7 +44,7 @@ import { format } from "date-fns";
 import { CalendarClock, Calendar as CalendarIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import React from "react";
-import { useTasksService } from "../../convex/services/tasksService";
+import { useTasksService } from "@/../convex/services/tasksService";
 
 function DatePicker({ value, onChange }: any) {
   return (
