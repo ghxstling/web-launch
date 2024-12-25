@@ -19,7 +19,7 @@ const css = {
   list: "flex flex-col",
   listHeading:
     "text-center text-xl font-medium underline underline-offset-1 mt-2 mb-4",
-  listScrollArea: "w-full h-[40rem] rounded-md border p-4",
+  listScrollArea: "w-full h-[44rem] rounded-md border p-4",
   listEntryTitle: "text-sm font-medium truncate max-w-sm",
   listEntryDesc: "text-wrap w-[28rem]",
 };
@@ -67,7 +67,6 @@ export default function StudentDashboard({ user }: StudentDashboardProps) {
   }, [tasks, user._id]);
 
   const memoizedColumns = useMemo(() => columns(user._id), [user._id]);
-
   const children = useMemo(
     () => <DataTable columns={memoizedColumns} data={sortedTasks} />,
     [memoizedColumns, sortedTasks],
