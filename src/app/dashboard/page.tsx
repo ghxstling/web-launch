@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LogOut, User } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useUserService } from "@/../convex/services/userService";
 import { useTasksService } from "@/../convex/services/tasksService";
 import { Separator } from "@/components/ui/separator";
@@ -127,6 +127,24 @@ export default function Page() {
     }
   }, [user, userService, tasksService, isLoaded, isSignedIn, apiUser, tasks]);
 
+  const dashboardDropdown = useMemo(
+    () => <DashboardDropdown handleClick={() => setIsModalOpen(true)} />,
+    [isModalOpen],
+  );
+  const desc = useMemo(() => description, [description]);
+  const dashboard = useMemo(() => dashboardContent, [dashboardContent]);
+  const editAccountModal = useMemo(
+    () => (
+      <EditAccountModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        user={apiUser}
+        clerkUser={user}
+      />
+    ),
+    [isModalOpen, apiUser, user],
+  );
+
   if (apiUser) {
     return (
       <>
@@ -159,23 +177,18 @@ export default function Page() {
             </div>
             <div className="grid gap-3 grid-flow-col">
               <CardDescription className="text-right text-black">
-                {description}
+                {desc}
               </CardDescription>
               <Separator orientation="vertical" />
-              <DashboardDropdown handleClick={() => setIsModalOpen(true)} />
+              {dashboardDropdown}
             </div>
           </div>
           <Separator />
         </CardHeader>
-        {dashboardContent}
+        {dashboard}
 
         {/* User Info Modal */}
-        <EditAccountModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          user={apiUser}
-          clerkUser={user}
-        />
+        {editAccountModal}
       </>
     );
   }
