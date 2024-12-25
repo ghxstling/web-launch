@@ -10,6 +10,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { updateSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,15 +46,15 @@ export function EditAccountModal({
   const [loadingMessage, setLoadingMessage] = useState(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  const togglePassword = () => {
-    setShowPassword((prevState) => !prevState);
+  const css = {
+    FormItem: "grid grid-cols-6 items-center gap-x-4",
+    FormLabel: "text-right col-span-2 mt-[8px]",
+    FormInput: "col-span-3",
+    FormNoEdit: "m-1 col-span-4 text-gray-400 font-light",
+    FormMsg: "text-red-500 text-sm col-start-3 col-span-4",
   };
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IUpdateAccountForm>({
+  const form = useForm<IUpdateAccountForm>({
     defaultValues: {
       firstName: user.firstName,
       lastName: user.lastName,
@@ -54,6 +63,10 @@ export function EditAccountModal({
     },
     resolver: zodResolver(updateSchema),
   });
+
+  const togglePassword = () => {
+    setShowPassword((prevState) => !prevState);
+  };
 
   const resetEffects = () => {
     setLoadingMessage(false);
@@ -85,10 +98,10 @@ export function EditAccountModal({
         completedTasks: user.completedTasks,
       });
       resetEffects();
-      setMessage(["Account updated successfully", "text-green-500 text-sm"]);
+      setMessage(["Account updated successfully", "text-green-500"]);
     } catch (err: any) {
       resetEffects();
-      setMessage([err.message, "text-red-500 text-sm"]);
+      setMessage([err.message, "text-red-500"]);
     }
   };
 
@@ -96,149 +109,155 @@ export function EditAccountModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md border-2 border-black">
+      <DialogContent className="max-w-[30rem] border-2 border-black">
         <DialogHeader>
           <DialogTitle>Edit account</DialogTitle>
           <DialogDescription>
             Make changes to your profile here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-6 items-center gap-4">
-              <Label htmlFor="firstName" className="text-right col-span-2">
-                First Name
-              </Label>
-              <Controller
-                render={({ field }) => (
-                  <Input id="firstName" className="col-span-4" {...field} />
-                )}
-                name="firstName"
-                control={control}
-              />
-              {errors.firstName?.message && (
-                <p className="text-red-500 text-sm col-span-6 text-center">
-                  {errors.firstName?.message}
-                </p>
-              )}
-            </div>
 
-            <div className="grid grid-cols-6 items-center gap-4">
-              <Label htmlFor="lastName" className="text-right col-span-2">
-                Last Name
-              </Label>
-              <Controller
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="grid gap-2 pb-4">
+              <FormField
+                control={form.control}
+                name="firstName"
                 render={({ field }) => (
-                  <Input id="lastName" className="col-span-4" {...field} />
+                  <FormItem className={css.FormItem}>
+                    <FormLabel htmlFor="firstName" className={css.FormLabel}>
+                      First Name
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        id="firstName"
+                        className={css.FormInput}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className={css.FormMsg} />
+                  </FormItem>
                 )}
+              />
+              <FormField
+                control={form.control}
                 name="lastName"
-                control={control}
-              />
-              {errors.lastName?.message && (
-                <p className="text-red-500 text-sm col-span-6 text-center">
-                  {errors.lastName?.message}
-                </p>
-              )}
-            </div>
-            <div className="grid grid-cols-6 items-center gap-4">
-              <Label htmlFor="emailLabel" className="text-right col-span-2">
-                Email
-              </Label>
-              <Label
-                htmlFor="emailText"
-                id="email"
-                className="m-1 col-span-4 text-gray-400 font-light"
-              >
-                {user.email}
-              </Label>
-            </div>
-            <div className="grid grid-cols-6 items-center gap-4">
-              <Label htmlFor="password" className="text-right col-span-2">
-                New Password
-              </Label>
-              <Controller
                 render={({ field }) => (
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    className="col-span-3"
-                    {...field}
-                  />
+                  <FormItem className={css.FormItem}>
+                    <FormLabel htmlFor="lastName" className={css.FormLabel}>
+                      Last Name
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        id="lastName"
+                        className={css.FormInput}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className={css.FormMsg} />
+                  </FormItem>
                 )}
+              />
+              <FormItem className={css.FormItem}>
+                <FormLabel htmlFor="emailLabel" className={css.FormLabel}>
+                  Email
+                </FormLabel>
+                <FormLabel htmlFor="emailText" className={css.FormNoEdit}>
+                  {user.email}
+                </FormLabel>
+              </FormItem>
+              <FormField
+                control={form.control}
                 name="password"
-                control={control}
-              />
-              <div className="text-right col-span-1">
-                {showPassword ? (
-                  <Link href="" className="underline" onClick={togglePassword}>
-                    Hide
-                  </Link>
-                ) : (
-                  <Link href="" className="underline" onClick={togglePassword}>
-                    Show
-                  </Link>
-                )}
-              </div>
-              {errors.password?.message && (
-                <p className="text-red-500 text-sm col-span-6 text-center">
-                  {errors.password?.message}
-                </p>
-              )}
-            </div>
-            <div className="grid grid-cols-6 items-center gap-4">
-              <Label htmlFor="confirm" className="text-right col-span-2">
-                Retype Password
-              </Label>
-              <Controller
                 render={({ field }) => (
-                  <Input
-                    id="confirm"
-                    type={showPassword ? "text" : "password"}
-                    className="col-span-3"
-                    {...field}
-                  />
+                  <FormItem className={css.FormItem}>
+                    <FormLabel htmlFor="password" className={css.FormLabel}>
+                      New Password
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        className={css.FormInput}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormLabel className="text-left text-sm col-span-1">
+                      {showPassword ? (
+                        <Link
+                          href=""
+                          className="underline"
+                          onClick={togglePassword}
+                        >
+                          Hide
+                        </Link>
+                      ) : (
+                        <Link
+                          href=""
+                          className="underline"
+                          onClick={togglePassword}
+                        >
+                          Show
+                        </Link>
+                      )}
+                    </FormLabel>
+                    <FormMessage className={css.FormMsg} />
+                  </FormItem>
                 )}
-                name="confirm"
-                control={control}
               />
-              {errors.confirm?.message && (
-                <p className="text-red-500 text-sm col-span-6 text-center">
-                  {errors.confirm?.message}
-                </p>
-              )}
+              <FormField
+                control={form.control}
+                name="confirm"
+                render={({ field }) => (
+                  <FormItem className={css.FormItem}>
+                    <FormLabel htmlFor="confirm" className={css.FormLabel}>
+                      Retype Password
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        id="confirm"
+                        type={showPassword ? "text" : "password"}
+                        className={css.FormInput}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className={css.FormMsg} />
+                  </FormItem>
+                )}
+              />
+              <FormItem className={css.FormItem}>
+                <FormLabel htmlFor="accountTypeLabel" className={css.FormLabel}>
+                  Account Type
+                </FormLabel>
+                <FormLabel htmlFor="accountTypeText" className={css.FormNoEdit}>
+                  {user.type === "student" ? <p>Student</p> : <p>Teacher</p>}{" "}
+                </FormLabel>
+              </FormItem>
+              <FormItem className={css.FormItem}>
+                <FormLabel
+                  htmlFor="classroomCodeText"
+                  className={css.FormLabel}
+                >
+                  Classroom Code
+                </FormLabel>
+                <FormLabel
+                  htmlFor="classroomCodeLabel"
+                  className={css.FormNoEdit}
+                >
+                  {user.code}
+                </FormLabel>
+              </FormItem>
             </div>
-            <div className="grid grid-cols-6 items-center gap-4">
-              <Label htmlFor="accountType" className="text-right col-span-2">
-                Account Type
-              </Label>
-              <Label
-                htmlFor="emailText"
-                id="email"
-                className="m-1 col-span-4 text-gray-400 font-light"
-              >
-                {user.type === "student" ? <p>Student</p> : <p>Teacher</p>}
-              </Label>
-            </div>
-            <div className="grid grid-cols-6 items-center gap-4">
-              <Label htmlFor="accountType" className="text-right col-span-2">
-                Classroom Code
-              </Label>
-              <Label
-                htmlFor="emailText"
-                id="email"
-                className="m-1 col-span-4 text-gray-400 font-light"
-              >
-                {user.code}
-              </Label>
-            </div>
-          </div>
-          {message && <p className={message[1]}>{message[0]}</p>}
-          <DialogFooter>
-            <Button type="submit">
-              {loadingMessage ? "Loading..." : "Save changes"}
-            </Button>
-          </DialogFooter>
-        </form>
+            {message && (
+              <p className={message[1] + "  text-sm"}>{message[0]}</p>
+            )}
+            <DialogFooter>
+              <Button type="submit">
+                {loadingMessage ? "Loading..." : "Save changes"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
