@@ -7,10 +7,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import React from "react";
 import { Label } from "../ui/label";
 import { useUserService } from "@/../convex/services/userService";
+import { CircleAlert } from "lucide-react";
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -36,13 +37,41 @@ export function ViewTaskModal({ isOpen, onClose, task }: TaskModalProps) {
     fetchData();
   }, [task, userService]);
 
+  const days = useMemo(
+    () => new Date().getDate() - new Date(task.dueDate).getDate(),
+    [task],
+  );
+  const hours = useMemo(
+    () => new Date().getHours() - new Date(task.dueDate).getHours(),
+    [task],
+  );
+  const minutes = useMemo(
+    () => new Date().getMinutes() - new Date(task.dueDate).getMinutes(),
+    [task],
+  );
+
   if (!isOpen) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-[40rem] border-2 border-black">
+      <DialogContent className="max-w-[40rem] border-2 p-4">
         <DialogHeader>
-          <DialogTitle>Task Information</DialogTitle>
+          <div className="flex flex-row justify-between">
+            <DialogTitle>Task Information</DialogTitle>
+            {task.isCompleted === "Overdue" && (
+              <div className="flex flex-row gap-1 text-red-500">
+                <CircleAlert className="size-3.5" />
+                <Label className="mr-8">
+                  {"This task was due "}
+                  {days < 1
+                    ? hours < 1
+                      ? minutes + " minutes ago"
+                      : hours + " hours ago"
+                    : days + " days ago"}
+                </Label>
+              </div>
+            )}
+          </div>
         </DialogHeader>
         <div className="grid grid-cols-5 items-center gap-3">
           <Label className={css.Label}>Title:</Label>
