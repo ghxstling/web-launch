@@ -17,6 +17,7 @@ import { useState } from "react";
 import { useTasksService } from "@/../convex/services/tasksService";
 import { useUserService } from "@/../convex/services/userService";
 import { useToast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
 
 const css = {
   header: "font-bold text-black text-center mt-1",
@@ -72,7 +73,17 @@ export const columns = (userId: any): ColumnDef<Task>[] => [
     accessorKey: "isCompleted",
     header: () => <div className={css.header}>Status</div>,
     cell: ({ row }) => {
-      return <div className="text-center">{row.getValue("isCompleted")}</div>;
+      return (
+        <div className="text-center">
+          {row.getValue("isCompleted") === "Overdue" ? (
+            <Badge className="rounded-xl px-1.5 py-0.5 bg-red-500 hover:bg-red-700">
+              Overdue
+            </Badge>
+          ) : (
+            row.getValue("isCompleted")
+          )}
+        </div>
+      );
     },
   },
   {

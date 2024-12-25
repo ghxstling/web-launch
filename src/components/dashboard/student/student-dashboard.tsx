@@ -1,16 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Accordion } from "@/components/ui/accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
-import { CardContent, CardFooter } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { CardContent } from "@/components/ui/card";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import { useUser } from "@clerk/nextjs";
@@ -59,14 +52,17 @@ export default function StudentDashboard({ user }: StudentDashboardProps) {
           ...task,
           isCompleted: task.completedBy.includes(user._id)
             ? "Complete"
-            : "Incomplete",
+            : new Date(task.dueDate) < new Date()
+              ? "Overdue"
+              : "Incomplete",
         };
       })
       .sort((a: any, b: any) => {
-        if (a.isCompleted === b.isCompleted) {
+        const statusOrder = { Complete: 1, Incomplete: 0, Overdue: -1 };
+        if (statusOrder[a.isCompleted] === statusOrder[b.isCompleted]) {
           return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
         }
-        return a.isCompleted === "Complete" ? 1 : -1;
+        return statusOrder[a.isCompleted] - statusOrder[b.isCompleted];
       });
   }, [tasks, user._id]);
 
@@ -132,10 +128,7 @@ export default function StudentDashboard({ user }: StudentDashboardProps) {
           </div>
           <div className={css.list + ` w-[calc(70%-0.5rem)] max-w-[70%]`}>
             <h1 className={css.listHeading}>Your Tasks</h1>
-            <ScrollArea
-              type="hover"
-              className="w-full h-[40rem] rounded-md border px-4"
-            >
+            <ScrollArea type="hover" className={css.listScrollArea + " px-4"}>
               {children}
             </ScrollArea>
           </div>
