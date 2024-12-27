@@ -66,6 +66,24 @@ export const updateSchema = z
     path: ["confirm"],
   });
 
+export const resetSchema = z
+  .object({
+    email: z.string().email({
+      message: "Invalid email address",
+    }),
+    password: z.string().min(8, {
+      message: "Password must be at least 8 characters",
+    }),
+    confirm: z.string().min(8, {
+      message: "Password must be at least 8 characters",
+    }),
+  })
+  .required()
+  .refine((data) => data.password === data.confirm, {
+    message: "Passwords do not match",
+    path: ["confirm"],
+  });
+
 export const taskSchema = z
   .object({
     title: z
