@@ -10,10 +10,13 @@ export interface ILoginForm {
   password: string;
 }
 
-export interface IRegisterForm extends ILoginForm {
+export interface IResetForm extends ILoginForm {
+  confirm: string;
+}
+
+export interface IRegisterForm extends IResetForm {
   firstName: string;
   lastName: string;
-  confirm: string;
   type: UserType;
   code: string;
 }
