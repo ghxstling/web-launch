@@ -71,10 +71,13 @@ export default function StudentDashboard({ user }: StudentDashboardProps) {
   }, [tasks, user._id]);
 
   const memoizedColumns = useMemo(() => columns(user._id), [user._id]);
-  const children = useMemo(
-    () => <DataTable columns={memoizedColumns} data={sortedTasks} />,
-    [memoizedColumns, sortedTasks],
-  );
+  const children = useMemo(() => {
+    return sortedTasks.length ? (
+      <DataTable columns={memoizedColumns} data={sortedTasks} />
+    ) : (
+      <div className={css.noData}>No tasks assigned</div>
+    );
+  }, [memoizedColumns, sortedTasks]);
 
   if (!isLoaded) return;
 
