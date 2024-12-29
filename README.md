@@ -167,7 +167,9 @@ npx convex dev
 
 ## Roadmap
 
-- Teachers
+- [ ] Allow users to reset their password
+
+- Teacher
 
   - [ ] Post announcements
   - [ ] Delete tasks
@@ -191,6 +193,7 @@ Dylan Choy: https://ghxstling.info/
 Project Link: [https://github.com/ghxstling/learnquest](https://github.com/ghxstling/learnquest)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
