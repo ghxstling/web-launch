@@ -3,7 +3,7 @@
 
 import { SignOutButton, useUser } from "@clerk/clerk-react";
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +12,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 import { LogOut, User } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import { useUserService } from "@/../convex/services/userService";
@@ -21,6 +28,7 @@ import { EditAccountModal } from "@/components/modal/edit-account-modal";
 import { TeacherDashboard } from "@/components/dashboard/teacher-dashboard";
 import StudentDashboard from "@/components/dashboard/student/student-dashboard";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 const DashboardDropdown = ({ handleClick }: { handleClick: () => void }) => {
   return (
@@ -129,7 +137,7 @@ export default function Page() {
 
   const dashboardDropdown = useMemo(
     () => <DashboardDropdown handleClick={() => setIsModalOpen(true)} />,
-    [isModalOpen],
+    [],
   );
   const desc = useMemo(() => description, [description]);
   const dashboard = useMemo(() => dashboardContent, [dashboardContent]);
@@ -155,25 +163,40 @@ export default function Page() {
                 Welcome, {apiUser.firstName} {apiUser.lastName}
               </CardTitle>
               <Separator orientation="vertical" />
-              <Button
-                onClick={() => {
-                  navigator.clipboard
-                    .writeText(apiUser.code)
-                    .then(() => {
-                      toast({
-                        description: "Code copied to clipboard",
-                      });
-                    })
-                    .catch((err) => {
-                      toast({
-                        description: "Failed to copy: " + err,
-                      });
-                    });
-                }}
-                className="text-sm font-medium"
-              >
-                Code: {apiUser.code}
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard
+                        .writeText(apiUser.code)
+                        .then(() => {
+                          toast({
+                            description: "Code copied to clipboard",
+                          });
+                        })
+                        .catch((err) => {
+                          toast({
+                            description: "Failed to copy: " + err,
+                          });
+                        });
+                    }}
+                    className={cn(
+                      buttonVariants({
+                        variant: "default",
+                        size: "default",
+                        className: "",
+                      }),
+                      "text-sm font-medium",
+                    )}
+                  >
+                    Code: {apiUser.code}
+                  </TooltipTrigger>
+                  <TooltipContent sideOffset={4}>
+                    <p>Copy to clipboard</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <div className="grid gap-3 grid-flow-col">
               <CardDescription className="text-right text-black">
