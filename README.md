@@ -126,7 +126,9 @@ npx convex dev
 
 7. Navigate to http://localhost:3000/ to view the application in your browser.
 
-8. (Optional) Log in with the following credentials:
+8. Create an account as a student or teacher using classroom code <code>A1B2C3</code>
+
+9. (Optional) Alternatively, log in with the following credentials:
 
 ```sh
 # Teacher
