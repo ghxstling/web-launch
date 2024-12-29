@@ -38,8 +38,6 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
   const [tasks, setTasks] = useState<any[]>([]);
   const [createTaskModal, setCreateTaskModal] = useState<boolean>(false);
 
-  if (!isLoaded) return;
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -142,9 +140,9 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
     }
   }, [tasks, students]);
 
-  const headings = ["Students", "Assigned Tasks"];
-  const data = [studentsList, tasksList];
   const lists = useMemo(() => {
+    const headings = ["Students", "Assigned Tasks"];
+    const data = [studentsList, tasksList];
     return Array.from({ length: 2 }).map((_, i) => (
       <div
         key={i}
@@ -168,7 +166,7 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
         </ScrollArea>
       </div>
     ));
-  }, data);
+  }, [studentsList, tasksList]);
 
   const modal = useMemo(() => {
     return (
@@ -178,7 +176,9 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
         user={user}
       />
     );
-  }, [createTaskModal]);
+  }, [createTaskModal, user]);
+
+  if (!isLoaded) return;
 
   return (
     <>

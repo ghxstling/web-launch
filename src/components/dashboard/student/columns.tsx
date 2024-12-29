@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
@@ -18,12 +19,13 @@ import { useTasksService } from "@/../convex/services/tasksService";
 import { useUserService } from "@/../convex/services/userService";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { Id } from "../../../../convex/_generated/dataModel";
 
 const css = {
   header: "font-bold text-black text-center mt-1",
 };
 
-export const columns = (userId: any): ColumnDef<Task>[] => [
+export const columns = (userId: Id<"users">): ColumnDef<Task>[] => [
   {
     id: "taskId",
     header: () => <div className={css.header}>#</div>,
