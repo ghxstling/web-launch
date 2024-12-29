@@ -58,7 +58,11 @@ export default function StudentDashboard({ user }: StudentDashboardProps) {
         };
       })
       .sort((a: any, b: any) => {
-        const statusOrder = { Complete: 1, Incomplete: 0, Overdue: -1 };
+        const statusOrder: { [key: string]: number } = {
+          Complete: 1,
+          Incomplete: 0,
+          Overdue: -1,
+        };
         if (statusOrder[a.isCompleted] === statusOrder[b.isCompleted]) {
           return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
         }

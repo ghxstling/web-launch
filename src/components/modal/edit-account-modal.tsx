@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,7 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { updateSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
