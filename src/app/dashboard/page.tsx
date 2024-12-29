@@ -66,7 +66,7 @@ export default function Page() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [description, setDescription] = useState<React.JSX.Element>();
   const [dashboardContent, setDashboardContent] = useState<React.JSX.Element>();
-  const [tasks, setTasks] = useState<any[] | null>(null);
+  const [tasks, setTasks] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -98,32 +98,38 @@ export default function Page() {
           taskInfo = await tasksService.getTasksByClassroomCode(
             userObj!.code!,
           )!;
-          setTasks(tasks);
+          setTasks(taskInfo);
           setDescription(
-            <ul>
-              <li>
-                You have{" "}
-                <b>{taskInfo.length - apiUser?.completedTasks.length}</b>{" "}
-                incomplete tasks
-              </li>
-              <li>
-                Your next task is due on{" "}
-                <b>
-                  {new Date(taskInfo[0].dueDate).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </b>
-                {" at "}
-                <b>
-                  {new Date(taskInfo[0].dueDate).toLocaleTimeString("en-US", {
-                    hour: "numeric",
-                    minute: "numeric",
-                  })}
-                </b>
-              </li>
-            </ul>,
+            taskInfo.length ? (
+              <ul>
+                <li>
+                  You have{" "}
+                  <b>{taskInfo.length - apiUser?.completedTasks.length}</b>{" "}
+                  incomplete tasks
+                </li>
+                <li>
+                  Your next task is due on{" "}
+                  <b>
+                    {new Date(taskInfo[0].dueDate).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </b>
+                  {" at "}
+                  <b>
+                    {new Date(taskInfo[0].dueDate).toLocaleTimeString("en-US", {
+                      hour: "numeric",
+                      minute: "numeric",
+                    })}
+                  </b>
+                </li>
+              </ul>
+            ) : (
+              <ul>
+                <li>You have no tasks to complete. Enjoy your day!</li>
+              </ul>
+            ),
           );
           setDashboardContent(<StudentDashboard user={apiUser} />);
         }
@@ -199,7 +205,7 @@ export default function Page() {
               </TooltipProvider>
             </div>
             <div className="grid gap-3 grid-flow-col">
-              <CardDescription className="text-right text-black">
+              <CardDescription className="text-right text-black items-center flex">
                 {desc}
               </CardDescription>
               <Separator orientation="vertical" />
