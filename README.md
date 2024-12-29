@@ -126,6 +126,18 @@ npx convex dev
 
 7. Navigate to http://localhost:3000/ to view the application in your browser.
 
+8. (Optional) Log in with the following credentials:
+
+```sh
+# Teacher
+email: gacipot214@gholar.com
+password: 12341234
+
+# Student
+email: kosope2500@chansd.com
+password: 12341234
+```
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
@@ -167,10 +179,16 @@ npx convex dev
 
 ## Roadmap
 
-- [ ] Allow users to reset their password
+- User
+
+  - [ ] Reset own password via email link
+  - [ ] Update email address
+  - [ ] Request to change user type (e.g., from student to teacher)
 
 - Teacher
 
+  - [ ] Invite students to join a classroom
+  - [ ] Create classrooms instead of using pre-generated classroom codes
   - [ ] Post announcements
   - [ ] Delete tasks
   - [ ] Edit tasks
@@ -179,6 +197,7 @@ npx convex dev
   - [ ] View announcements
   - [ ] Pin tasks
   - [ ] Set reminders for tasks
+  - [ ] Request to join a classroom
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
