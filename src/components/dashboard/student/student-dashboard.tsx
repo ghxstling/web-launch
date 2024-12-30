@@ -19,7 +19,7 @@ const css = {
   list: "flex flex-col",
   listHeading:
     "text-center text-xl font-medium underline underline-offset-1 mt-2 mb-4",
-  listScrollArea: "w-full h-[44rem] rounded-md border p-4",
+  listScrollArea: "w-full h-[40rem] rounded-md border p-4",
   listEntryTitle: "text-sm font-medium truncate max-w-sm",
   listEntryDesc: "text-wrap w-[28rem]",
 };
